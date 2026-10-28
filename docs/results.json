@@ -1,0 +1,113 @@
+{
+  "bad_dag": {
+    "path": "examples\\bad_dag.py",
+    "risk": 102,
+    "grade": "F",
+    "counts": {
+      "critical": 1,
+      "high": 3,
+      "medium": 3,
+      "low": 1
+    },
+    "dags": 1,
+    "tasks": 4,
+    "findings": [
+      {
+        "code": "hardcoded-secret",
+        "severity": "critical",
+        "line": 32,
+        "scope": "PythonOperator@32",
+        "message": "PythonOperator passes password= as a literal string",
+        "hint": "load it from a connection, a Variable, or a secret backend",
+        "points": 30
+      },
+      {
+        "code": "module-level-side-effect",
+        "severity": "high",
+        "line": 17,
+        "scope": "<module>",
+        "message": "boto3.client() runs at import time, i.e. on every scheduler parse",
+        "hint": "move the call inside the task callable so it runs once per task run",
+        "points": 15
+      },
+      {
+        "code": "duplicate-task-id",
+        "severity": "high",
+        "line": 30,
+        "scope": "pull",
+        "message": "task_id 'pull' is defined twice (lines 29 and 30); the second silently replaces the first",
+        "hint": "give each task a distinct task_id",
+        "points": 15
+      },
+      {
+        "code": "sensor-without-timeout",
+        "severity": "high",
+        "line": 31,
+        "scope": "wait_for_upstream",
+        "message": "ExternalTaskSensor has no timeout, so it can hold a slot forever",
+        "hint": "set timeout (and mode='reschedule' for long waits)",
+        "points": 15
+      },
+      {
+        "code": "catchup-enabled",
+        "severity": "medium",
+        "line": 19,
+        "scope": "revenue_rollup",
+        "message": "catchup=True will backfill every interval since start_date on first deploy",
+        "hint": "set catchup=False, or narrow start_date to the moment you want to begin",
+        "points": 8
+      },
+      {
+        "code": "no-retries",
+        "severity": "medium",
+        "line": 29,
+        "scope": "4 task(s)",
+        "message": "4 task(s) set no retries and default_args has none: pull, wait_for_upstream, PythonOperator@32",
+        "hint": "set retries in default_args so one blip does not page a human",
+        "points": 8
+      },
+      {
+        "code": "dynamic-task-id",
+        "severity": "medium",
+        "line": 32,
+        "scope": "PythonOperator@32",
+        "message": "task_id is an f-string, so task identity changes on every parse",
+        "hint": "use a literal task_id and pass the varying value as an argument",
+        "points": 8
+      },
+      {
+        "code": "no-owner",
+        "severity": "low",
+        "line": 19,
+        "scope": "revenue_rollup",
+        "message": "default_args has no owner",
+        "hint": "set owner so failures are routed to a team instead of unowned@example.com",
+        "points": 3
+      }
+    ]
+  },
+  "good_dag": {
+    "path": "examples\\good_dag.py",
+    "risk": 0,
+    "grade": "A",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "dags": 1,
+    "tasks": 3,
+    "findings": []
+  },
+  "rules_triggered": [
+    "catchup-enabled",
+    "duplicate-task-id",
+    "dynamic-task-id",
+    "hardcoded-secret",
+    "module-level-side-effect",
+    "no-owner",
+    "no-retries",
+    "sensor-without-timeout"
+  ]
+}
